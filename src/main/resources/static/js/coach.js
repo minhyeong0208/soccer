@@ -7,7 +7,7 @@ let totalPages = 1;
 let totalPeople = [];
 let mappedPeople = [];
 
-let url = `http://localhost:80/persons`;
+let url = `http://54.180.116.14:80/persons`;
 
 // csrf
 const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
@@ -124,7 +124,7 @@ document.getElementById('search-btn').addEventListener('click', function () {
     }
 
     fetchCoachData(currentPage, url);
-    url = `http://localhost:80/persons`;
+    url = `http://54.180.116.14:80/persons`;
 
 })
 

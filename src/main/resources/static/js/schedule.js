@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function fetchData() {
-        fetch('http://localhost:80/schedule/list')
+        fetch('http://54.180.116.14:80/schedule/list')
             .then(response => response.json())
             .then(data => {
                 //console.group(data);

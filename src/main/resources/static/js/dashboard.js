@@ -18,7 +18,7 @@ const imageMap = {
 let playerCount = 0;
 
 function getPlayerCount() {
-    fetch('http://localhost:80/persons/players')
+    fetch('http://54.180.116.14:80/persons/players')
         .then(response => response.json())
         .then(data => {
             playerCount = data.totalElements;
@@ -29,7 +29,7 @@ function getPlayerCount() {
 
 // 전체 부상자 수
 function getInjured() {
-    fetch('http://localhost:80/injuries')
+    fetch('http://54.180.116.14:80/injuries')
         .then(response => response.json())
         .then(data => {
             //console.log(`getInjured : ${data.totalElements}`);
@@ -42,7 +42,7 @@ let ctx = document.getElementById('monthly-injury-counts').getContext('2d');
 let monthlyInjuryChart;
 
 function monthlyInjury() {
-    fetch('http://localhost:80/injuries/monthly-injury-counts')
+    fetch('http://54.180.116.14:80/injuries/monthly-injury-counts')
         .then(response => response.json())
         .then(data => {
                 // 1~12월 데이터를 모두 포함하는 배열 생성
@@ -123,7 +123,7 @@ let positionCount = [];
 let countByposition = [];
 
 function countPosition() {
-    fetch('http://localhost:80/persons/positions/count')
+    fetch('http://54.180.116.14:80/persons/positions/count')
         .then(response => response.json())
         .then(data => {
                 //console.log(data);
@@ -182,7 +182,7 @@ function updateChart2(countByposition) {
 let futureGames = [];
 
 function getFuturGames() {
-    fetch('http://localhost:80/games/future')
+    fetch('http://54.180.116.14:80/games/future')
         .then(response => response.json())
         .then(data => {
             futureGames = data;
@@ -244,7 +244,7 @@ function getFuturGames() {
 
 // 순위표
 function getRankTable() {
-    fetch('http://localhost:80/rank')
+    fetch('http://54.180.116.14:80/rank')
         .then(response => response.json())
         .then(data => {
             //console.table(data);
@@ -276,7 +276,7 @@ function getRankTable() {
 let todaySchedule = [];
 
 function getTodaySchedule() {
-    fetch('http://localhost:80/schedule/today')
+    fetch('http://54.180.116.14:80/schedule/today')
         .then(response => response.json())
         .then(data => {
             console.group(data);
@@ -327,7 +327,7 @@ let ctx3 = document.getElementById('injuries-count-compare').getContext('2d');
 let injuriesCountCompare;
 
 function getInjuriesCompare() {
-    fetch('http://localhost:80/injuries/compare')
+    fetch('http://54.180.116.14:80/injuries/compare')
         .then(response => response.json())
         .then(data => {
             const injuryPart = Object.keys(data);

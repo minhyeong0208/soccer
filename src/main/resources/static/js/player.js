@@ -10,7 +10,7 @@ let mappedPeople = [];
 let selectedPlayer = [];
 
 //
-let url = `http://localhost:80/persons`;
+let url = `http://54.180.116.14:80/persons`;
 
 // csrf
 const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
@@ -137,7 +137,7 @@ document.getElementById('search-btn').addEventListener('click', function() {
 	}
 
 	fetchPlayerData(currentPage, url);
-	url = `http://localhost:80/persons`;
+	url = `http://54.180.116.14:80/persons`;
 
 })
 
@@ -164,7 +164,7 @@ function showPlayerDetail(player) {
 	document.getElementById('player-detail-image').setAttribute('onerror', `this.onerror = null; this.src = '/img/persons/default.png';`);
 
 	// 능력치 데이터 가져오기
-	fetch(`http://localhost/abilities/person/${player.personIdx}/abilities`)
+	fetch(`http://54.180.116.14/abilities/person/${player.personIdx}/abilities`)
 		.then(response => response.json())
 		.then(data => {
 			// 가장 최근의 실제 능력치와 예측 능력치 가져오기
@@ -377,7 +377,7 @@ document.getElementById('update-player-ability').addEventListener('click', funct
 	const personIdx = selectedPlayer.personIdx; // 선수의 personIdx 가져오기
 	console.log(personIdx)
 
-	fetch(`http://localhost/abilities/actual/${personIdx}`, { // personIdx를 URL에 포함시킴
+	fetch(`http://54.180.116.14/abilities/actual/${personIdx}`, { // personIdx를 URL에 포함시킴
 		method: "POST",
 		headers: {
 			'Content-Type': 'application/json',
@@ -522,7 +522,7 @@ function postPlayer(newPerson, playerAbility) {
 
 // 능력치 추가 API 호출
 function postAbility(personIdx, ability) {
-	fetch(`http://localhost/abilities/actual/${personIdx}`, {
+	fetch(`http://54.180.116.14/abilities/actual/${personIdx}`, {
 		method: "POST",
 		headers: {
 			'Content-Type': 'application/json',
