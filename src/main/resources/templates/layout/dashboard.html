@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default2}">
+<th:block layout:fragment="customCss">
+    <style>
+        .layout-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(4, auto);
+            gap: 2rem;
+            padding: 1rem;
+            /*background-color: #f4f4f4;*/
+            /*height: 100vh;*/
+        }
+
+        .layout-item {
+            border: 1px solid #F4F5FC;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+
+        .span-2-columns {
+            grid-column: span 2;
+        }
+
+        .span-3-columns {
+            grid-column: span 3;
+        }
+
+        .span-2-rows {
+            grid-row: span 2;
+        }
+
+        .span-4-rows {
+            grid-row: span 4;
+        }
+
+        /*
+        .regular-table {
+           height: 90vh;
+        }
+
+         */
+
+        .layout-item-col {
+            padding-top: 1.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            max-width: 100%; /* 최대 너비를 화면에 맞게 설정 */
+        }
+
+        .card {
+            border-radius: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            max-width: 100%; /* 최대 너비를 화면에 맞게 설정 */
+            max-height: calc(100vh - 120px); /* 최대 높이를 화면에 맞게 설정 (헤더와 여백을 고려) */
+        }
+
+        .card-top-section {
+            border-radius: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            max-width: 100%; /* 최대 너비를 화면에 맞게 설정 */
+            max-height: 6rem;
+        }
+
+        .card-left-border {
+            border-left: 0.25rem solid;
+        }
+
+        .border-left-primary {
+            border-left-color: #328b85;
+        }
+
+        .border-left-warning {
+            border-left-color: #f57a4c;
+        }
+
+        .text-primary {
+            color: #328b85 !important;
+        }
+
+        .text-warning {
+            color: #f57a4c !important;
+        }
+
+        .table-wrapper {
+            display: flex;
+            justify-content: center;
+        }
+
+        .rank-table-widget table {
+            border-collapse: collapse;
+            table-layout: auto; /* 여기서 fixed를 auto로 변경 */
+        	width: 100%; /* 테이블이 부모 요소에 맞게 */
+            height: 99vh;
+        }
+
+        .rank-table-widget thead {
+            position: sticky;
+        }
+
+        .rank-table-widget th {
+            padding: 1.25rem 1rem 1rem 1rem;
+            font-size: 1rem;
+            color: #A0A7B1;
+            width: fit-content;
+            white-space: nowrap;
+            background-color: #F4F5FC;
+            text-align: center; /* 내용이 중앙에 오도록 */
+        }
+
+        .rank-table-widget td {
+            padding: 1rem 1rem 1rem 1rem;
+            vertical-align: middle;
+            white-space: nowrap;
+            border-bottom: 2px solid #EDEEF1;
+            text-align: center; /* 내용이 중앙에 오도록 */
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        #upcoming-games {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 1rem 0;
+            width: 100%;
+            flex-direction: row;
+            overflow: auto;
+        }
+
+        .upcoming-game {
+            appearance: none;
+            text-decoration: none;
+            background: linear-gradient(#f9f9f9 30%, rgba(50, 139, 133, 0.38));
+            margin-top: 1.25rem;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            height: 10rem;
+            /*width: 13rem;*/
+            display: flex;
+            /*flex: 0 0 13rem;*/
+            flex-direction: row;
+            /*justify-content: space-between;*/
+            gap: 2em;
+        }
+
+        .date-flag {
+            border-radius: 1rem;
+            height: 5rem;
+            min-width: 3rem;
+            width: 3rem;
+            border: 1px solid white;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upcoming-game-details {
+            width: 100%;
+        }
+
+        .game-date {
+            top: 0.5rem;
+            left: 0.5rem;
+            font-size: 1.35rem;
+        }
+
+        .game-date-month {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        #today-schedules {
+            display: grid;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0.5rem;
+            padding: 1rem 0;
+            margin-top: 1rem;
+            height: 5rem;
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .today-schedule {
+            /*height: 4.5rem;*/
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .today-schedule-m {
+            border-bottom: 0.025rem solid #EDEEF1;
+        }
+
+        .today-schedule-gubun-flag {
+            border-radius: 0.5rem;
+            height: 1.5rem;
+            min-width: 3rem;
+            width: 3rem;
+            background-color: #ecddff;
+            color: #5f5967;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .today-schedule-details {
+            padding: 0.125rem;
+            width: 24rem;
+            text-align: center;
+            vertical-align: baseline;
+        }
+
+        .ec-schedule {
+            padding: 0.125rem;
+        }
+
+        .no-schedule {
+            color: #9fa0a1;
+        }
+
+    </style>
+</th:block>
+
+<th:block layout:fragment="customContents">
+    <div class="grid-container">
+        <div class="layout-container">
+            <!-- 첫 번째 줄 (전체 선수 수, 부상자 수) -->
+            <div class="layout-item card-top-section card-left-border border-left-primary align-items-center">
+                <div class="row">
+                    <div class="h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="h6 font-weight-bold text-primary text-uppercase mb-1">전체 선수 수</div>
+                                </div>
+                                <div class="col-auto">
+                                    <b id="player-count" style="font-size: 1.25rem;"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layout-item card-top-section card-left-border border-left-warning align-items-center">
+                <div class="row">
+                    <div class="h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="h6 font-weight-bold text-warning text-uppercase mb-1">부상자 수</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                                </div>
+                                <div class="col-auto">
+                                    <b id="injury-count" style="font-size: 1.25rem;"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- 두 번째 줄 (커다란 영역 하나) -->
+            <div class="layout-item span-4-rows layout-item-col">
+                <!-- 순위표 -->
+                <div id="rank-table-widget" class="rank-table-widget table-wrapper">
+                    <!-- 확인용 스타일 하드코딩 -->
+                    <table class="regular-table">
+                        <thead>
+                        <tr>
+                            <th>순위</th>
+                            <th>팀명</th>
+                            <th>승점</th>
+                            <th>승리</th>
+                            <th>무승부</th>
+                            <th>패배</th>
+                        </tr>
+                        </thead>
+                        <tbody id="rank-table-rows"></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- 세 번째 줄 (3개의 영역) -->
+            <div class="layout-item span-2-columns card card-left-border border-left-primary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="h6 font-weight-bold text-primary text-uppercase mb-1">예정 경기</div>
+                        </div>
+                    </div>
+                    <div id="upcoming-games">
+
+                    </div>
+                </div>
+
+
+                <table>
+                    <tbody id="upcoming-3-games"></tbody>
+                </table>
+            </div>
+            <div class="layout-item card card-left-border border-left-primary">
+                <!-- 작은 영역 2 -->
+                <div class="card-body">
+                    <div class="h6 font-weight-bold text-primary text-uppercase mb-1">월별 부상자 추이</div>
+                    <!-- 차트 크기는 확인용 하드코딩 -->
+                    <div class="chart-wrapper" style="width: 30rem; padding-right: 2rem; margin-top: 1rem;">
+                        <canvas id="monthly-injury-counts"></canvas>
+                    </div>
+
+                </div>
+            </div>
+            <div class="layout-item card card-left-border border-left-primary">
+                <div class="card-body">
+                    <div class="h6 font-weight-bold text-primary text-uppercase mb-1">
+                        오늘의 일정
+                    </div>
+                    <div id="today-schedules">
+                        <div class="today-schedule today-schedule-m">
+                            <div class="today-schedule-gubun-flag">
+                                경기
+                            </div>
+                            <div class="today-schedule-details" id="today-schedule-games">
+
+                            </div>
+                        </div>
+                        <div class="today-schedule today-schedule-m">
+                            <div class="today-schedule-gubun-flag">
+                                훈련
+                            </div>
+                            <div class="today-schedule-details" id="today-schedule-trainings">
+
+                            </div>
+                        </div>
+                        <div class="today-schedule today-schedule-l">
+                            <div class="today-schedule-gubun-flag">
+                                부상
+                            </div>
+                            <div class="today-schedule-details" id="today-schedule-injuries">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layout-item card card-left-border border-left-primary">
+                <div class="card-body">
+                    <div class="h6 font-weight-bold text-primary text-uppercase mb-1">포지션별 선수 수</div>
+                    <div class="chart-wrapper"
+                         style="width: 30rem; height: 15rem; padding-right: 2rem; margin-top: 1rem;">
+                        <canvas id="position-count"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="layout-item card card-left-border border-left-primary">
+                <div class="card-body">
+                    <div class="h6 font-weight-bold text-primary text-uppercase mb-1">부위별 부상자 수 (전월 비교)</div>
+                    <div class="chart-wrapper"
+                         style="width: 30rem; height: 15rem; padding-right: 2rem; margin-top: 1rem;">
+                        <canvas id="injuries-count-compare"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</th:block>
+
+<th:block layout:fragment="customJs">
+    <script
+            src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="/js/dashboard.js"></script>
+</th:block>
+</html>

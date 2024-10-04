@@ -1,0 +1,62 @@
+.modal-background,
+.edit-modal-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+    display: none; /* Hide modal by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.popup,
+.edit-popup {
+    background: white;
+    padding: 20px;
+    border-radius: 12px; /* Rounded corners similar to the image */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Softer shadow */
+    max-width: 300px; /* Adjusted for smaller modal */
+    width: 90%;
+    text-align: center; /* Center text */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content */
+}
+
+.popup h2 {
+    font-size: 18px; /* Slightly smaller title */
+    margin-bottom: 10px;
+}
+
+.popup p {
+    margin: 8px 0;
+    font-size: 14px; /* Adjust text size */
+}
+
+.modal-footer,
+.edit-modal-footer {
+    margin-top: 20px;
+    width: 100%; /* Make button container full width */
+    display: flex;
+    justify-content: center; /* Center button */
+}
+
+.modal-footer button,
+.edit-modal-footer button {
+    width: 80px; /* Set button width */
+    padding: 10px 0; /* More padding for button */
+    background-color: #e9edf5; /* Light button background */
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    color: #333; /* Darker button text */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Soft button shadow */
+    cursor: pointer;
+}
+
+.modal-footer button:hover,
+.edit-modal-footer button:hover {
+    background-color: #d5dae4; /* Slightly darker background on hover */
+}

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/default}">
+<head>
+    <meta charset="UTF-8">
+    <title>이적 관리</title>
+</head>
+<body>
+<th:block layout:fragment="customContents1">
+    <!-- 이적 관리 테이블 -->
+    <div class="container mb-4">
+        <div class="row mb-3">
+            <!-- 이적 리스트 제목 -->
+            <h3 class="section-title bold">이적 리스트</h3>
+        </div>
+
+        <!-- 추가/삭제 버튼을 오른쪽에 배치 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- 라디오 버튼 필터 -->
+            <div class="btn-group" role="group" aria-label="Transfer Type Filter">
+                <th:block th:each="type, iterStat : ${transferType}">
+                    <input type="radio" class="btn-check" name="transferTypeFilter"
+                           th:id="${'transferType' + iterStat.index}"
+                           th:value="${type}"
+                           autocomplete="off"
+                           th:checked="${iterStat.first}">
+                    <label class="btn btn-outline-primary"
+                           th:for="${'transferType' + iterStat.index}"
+                           th:text="${type}"></label>
+                </th:block>
+            </div>
+            <div>
+                <button id="openAddTransferModalButton" class="btn btn-primary me-2"
+                        data-bs-toggle="modal" data-bs-target="#addTransferModal">
+                    <i class="fas fa-plus"></i> 이적 추가
+                </button>
+                <button id="deleteSelectedBtn" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> 선택 삭제
+                </button>
+            </div>
+        </div>
+
+        <!-- 이적 리스트 테이블 -->
+        <table class="table table-hover">
+            <thead class="table">
+            <tr style="background-color: #f0f0f0">
+                <th><input type="checkbox" id="selectAllCheckbox"></th>
+                <th>이적 타입</th>
+                <th>선수명</th>
+                <th>상대팀</th>
+                <th>이적 일자</th>
+                <th>이적료</th>
+                <th>관련 메모</th>
+            </tr>
+            </thead>
+            <tbody id="transferTableBody">
+                <tr th:each="transfer : ${transfers}">
+                    <td><input type="checkbox" name="rowCheckbox" th:value="${transfer.transferIdx}"></td>
+                    <td th:text="${transfer.transferType == 1 ? '구매' : '판매'}">이적 타입</td>
+                    <td th:text="${transfer.person != null ? transfer.person.personName : '--'}">선수명</td>
+                    <td th:text="${transfer.opponent}">상대팀</td>
+                    <td th:text="${#temporals.format(transfer.tradingDate, 'yyyy-MM-dd')}">이적일자</td>
+                    <td th:text="${#numbers.formatInteger(transfer.price, 3, 'COMMA')}">이적료</td>
+                    <td th:text="${transfer.transferMemo}">관련 메모</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="row mb-3">
+            <!-- 검색 영역 -->
+            <div class="d-flex justify-content-center mb-3">
+                <div class="input-group">
+                    <select class="form-select" id="searchField" style="max-width: 150px;">
+                        <option value="person">선수명</option>
+                        <option value="team">팀명</option>
+                    </select>
+                    <input type="text" class="form-control" id="searchInput" placeholder="선수명 입력">
+                    <button class="btn btn-dark" id="searchButton">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 페이지 네비게이션 추가 -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <!-- 이전 버튼 -->
+                <li class="page-item" id="prevGroupItem">
+                    <button id="prevGroup" class="page-link" disabled>이전</button>
+                </li>
+                <!-- pageable 동적 버튼 -->
+                <span id="pageButtons" class="pagination"></span>
+                <!-- 다음 버튼 -->
+                <li class="page-item" id="nextGroupItem">
+                    <button id="nextGroup" class="page-link" disabled>다음</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</th:block>
+
+<th:block layout:fragment="customContents2">
+    <div class="container-fluid d-flex flex-column" style="height: 100%;">
+        <!-- 선수 정보 컨테이너 (content1) -->
+        <div class="transfer-form-container player-info-container bg-light p-3 rounded shadow-sm"
+             style="flex: 0 0 auto; overflow-y: hidden; margin-bottom: 20px; max-height: 300px;">
+
+            <!-- 선수 이미지 및 테이블을 Flex로 가로 배치 -->
+            <div class="d-flex align-items-center">
+                <!-- 선수 이미지 추가 -->
+                <div class="player-image-container text-center me-4"
+                     style="width: 200px; height: 200px; overflow: hidden; display: inline-block; vertical-align: top;">
+                    <img id="playerImage" src="default-image.png" alt="선수 이미지"
+                         class="img-fluid"
+                         style="width: 100%; height: 100%; object-fit: contain;"
+                         onerror="this.onerror=null; this.src='/img/persons/default.png';">
+                </div>
+
+                <!-- 선수 정보 테이블 -->
+                <table class="table table-striped table-hover mb-0"
+                       style="flex: 1; table-layout: fixed; width: 100%;">
+                    <tbody>
+                    <tr>
+                        <th>등번호</th>
+                        <td id="playerNumber">--</td>
+                    </tr>
+                    <tr>
+                        <th>이름</th>
+                        <td id="playerName">--</td>
+                    </tr>
+                    <tr>
+                        <th>포지션</th>
+                        <td id="playerPosition">--</td>
+                    </tr>
+                    <tr>
+                        <th>키</th>
+                        <td id="playerHeight">--</td>
+                    </tr>
+                    <tr>
+                        <th>몸무게</th>
+                        <td id="playerWeight">--</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 이적 정보 수정 폼 컨테이너 (content2) -->
+        <div class="transfer-form-container bg-light p-3 rounded shadow-sm"
+             style="flex: 1; overflow-y: auto;">
+            <div class="form-group mb-3">
+                <label for="editTransferPlayer" class="form-label">선수명</label>
+                <input type="text" class="form-control" id="editTransferPlayer" readonly>
+            </div>
+            <div class="form-group mb-3">
+                <label for="editTransferDate" class="form-label">이적 일자</label>
+                <input type="date" class="form-control" id="editTransferDate">
+            </div>
+            <div class="form-group mb-3">
+                <label for="editTransferType" class="form-label">이적 타입</label>
+                <select class="form-control" id="editTransferType">
+                    <option value="1">구매</option>
+                    <option value="0">판매</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="editOpponent" class="form-label">상대팀</label>
+                <input type="text" class="form-control" id="editOpponent">
+            </div>
+            <div class="form-group mb-3">
+                <label for="editPrice" class="form-label">이적료</label>
+                <input type="text" class="form-control" id="editPrice">
+            </div>
+            <div class="form-group mb-3">
+                <label for="editTransferMemo" class="form-label">관련 메모</label>
+                <textarea class="form-control" id="editTransferMemo"></textarea>
+            </div>
+            <input type="hidden" id="transferId">
+            <div class="d-flex justify-content-end">
+                <button class="btn btn-primary" id="updateTransferButton">수정하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이적 선수 추가 모달 -->
+    <div id="addTransferModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">이적 선수 추가</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form" id="addForm1">
+                        <div class="form-group mb-3">
+                            <label class="form-label">이적 타입</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="transferType" id="transferTypeBuy" value="buy" checked>
+                                    <label class="form-check-label" for="transferTypeBuy">구매</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="transferType" id="transferTypeSell" value="sell" >
+                                    <label class="form-check-label" for="transferTypeSell">판매</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label">선수명</label>
+                            <div id="playerNameContainer"></div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addTradingDate" class="form-label">이적 일자</label>
+                            <input type="date" class="form-control" id="addTradingDate">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPrice" class="form-label">이적료</label>
+                            <input type="text" class="form-control" id="addPrice" autocomplete="off">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addOpponent" class="form-label">상대팀</label>
+                            <select class="form-control" id="addOpponent">
+                                <option value="">상대팀 선택</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addMemo" class="form-label">관련 메모</label>
+                            <textarea class="form-control" id="addMemo" autocomplete="off"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form" id="addForm2">
+                        <div class="form-group mb-3">
+                            <label for="addPlayerBirthdate" class="form-label">생년월일</label>
+                            <input type="date" class="form-control" id="addPlayerBirthdate">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerNationality" class="form-label">국적</label>
+                            <input type="text" class="form-control" id="addPlayerNationality" autocomplete="off">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerBackNumber" class="form-label">등번호</label>
+                            <input type="text" class="form-control" id="addPlayerBackNumber" autocomplete="off">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">포지션</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="playerPosition" id="positionGK" value="GK">
+                                    <label class="form-check-label" for="positionGK">GK</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="playerPosition" id="positionFW" value="FW">
+                                    <label class="form-check-label" for="positionFW">FW</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="playerPosition" id="positionMF" value="MF">
+                                    <label class="form-check-label" for="positionMF">MF</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="playerPosition" id="positionDF" value="DF">
+                                    <label class="form-check-label" for="positionDF">DF</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerContractStart" class="form-label">계약 시작일</label>
+                            <input type="date" class="form-control" id="addPlayerContractStart">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerContractEnd" class="form-label">계약 만료일</label>
+                            <input type="date" class="form-control" id="addPlayerContractEnd">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerHeight" class="form-label">키 (cm)</label>
+                            <input type="number" step="0.1" class="form-control" id="addPlayerHeight" autocomplete="off">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerWeight" class="form-label">몸무게 (kg)</label>
+                            <input type="number" step="0.1" class="form-control" id="addPlayerWeight" autocomplete="off">
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="addPlayerImage" class="form-label">프로필 사진</label>
+                            <input type="file" class="form-control" id="addPlayerImage" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="nextInfoButton">다음</button>
+                    <button class="btn btn-primary" id="backInfoButton">이전</button>
+                    <button class="btn btn-primary" id="saveButton">저장</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 판매 확인 모달 -->
+    <div class="modal fade" id="sellConfirmModal" tabindex="-1" aria-labelledby="sellConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sellConfirmModalLabel">판매 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    정말 판매하시겠습니까?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="confirmSellButton">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 업데이트 성공 모달 -->
+    <div class="modal fade" id="updateSuccessModal" tabindex="-1" aria-labelledby="updateSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateSuccessModalLabel">수정 완료</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">이적 정보가 성공적으로 수정되었습니다.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이적 삭제 모달 -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">삭제 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    선택한 이적 기록을 삭제하시겠습니까?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customModalLabel">알림</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Modal message will be inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="customJs">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/transfer.js"></script>
+</th:block>
+</body>
+</html>

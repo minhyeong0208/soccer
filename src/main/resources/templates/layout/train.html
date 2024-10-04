@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/default}">
+<th:block layout:fragment="customCss">
+	<style>
+		#container {
+			display: flex;
+			flex-direction: column;
+			height: calc(100vh - 170px); /* 브라우저 전체 높이에서 185px을 뺀 높이 */
+			gap: 10px;
+		}
+		#trainDetails, #playerSection {
+			flex: 1; /* 두 영역을 1대1로 배분 */
+			overflow-y: auto; /* 스크롤 적용 */
+		}
+		#trainDetails{ min-height: 200px; /* 훈련 상세 정보 영역도 최소 높이 설정 */ } 
+		#playerSection {
+			max-height: 80%; /* 최대 높이를 부모 컨테이너로 제한 */
+			min-height: 300px; /* 테이블 영역이 최소 높이를 유지 */
+		}
+		#buttonsWrapper {
+    		display: flex;
+    		justify-content: space-between; /* 양 끝으로 버튼 배치 */
+    		padding: 10px 20px;
+		}
+
+		#leftButtons {
+    		/* 왼쪽에 추가 버튼만 포함하는 컨테이너 */
+		}
+
+		#rightButtons {
+    		display: flex;
+    		gap: 10px; /* 오른쪽 버튼들 사이의 간격 */
+		}
+	</style>
+</th:block>
+
+<th:block layout:fragment="customContents1">
+	<h3 class="bold">훈련 관리</h3>
+	<div class="d-flex justify-content-end mb-3">
+    <button type="button" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#trainModal">
+        <i class="fas fa-plus fa-sm text-white-50"></i> 훈련 추가
+    </button>
+    <button type="deleteButton" class="btn btn-danger btn-sm">
+        <i class="fas fa-trash fa-sm text-white-50"></i> 선택 삭제
+    </button>
+</div>
+	<table class="table table-hover" id="trainTable">
+		<thead class="table">
+			<tr style="background-color: #f0f0f0">
+				<th><input type="checkbox" id="selectAllCheckbox"></th>
+				<th>훈련명</th>
+				<th>시작 시각</th>
+				<th>종료 시각</th>
+				<th>훈련 시작일</th>
+				<th>훈련 종료일</th>
+				<th>훈련 제한인원</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<div class="row mb-3">
+		<!-- 검색 영역 -->
+		<div class="d-flex justify-content-center mb-3">
+			<div class="input-group">
+				<input type="text" class="form-control" id="searchInput" placeholder="훈련명 입력">
+				<button class="btn btn-dark" id="searchButton">
+					<i class="fas fa-search"></i> 검색
+				</button>
+			</div>
+		</div>
+	</div>
+	<nav aria-label="Page navigation">
+		<ul class="pagination justify-content-center">
+			<li class="page-item">
+				<button id="prevGroup" class="page-link" disabled>이전</button>
+			</li>
+			<span id="pageButtons" class="pagination"></span>
+			<li class="page-item">
+				<button id="nextGroup" class="page-link" disabled>다음</button>
+			</li>
+		</ul>
+	</nav>
+	<!-- modal.html의 모달을 포함 -->
+    <th:block th:replace="fragments/modal :: modalFragment"></th:block>
+	<!-- 훈련 추가 모달 -->
+	<div id="trainModal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="modalTitle" class="modal-title">훈련 추가</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<form id="trainForm">
+			<div class="modal-body">
+				<!-- 4행 2열로 나눈 입력 폼 -->
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="trainName" class="form-label">훈련명</label>
+						<input type="text" class="form-control" id="trainName" placeholder="훈련명을 입력하세요" required>
+					</div>
+					<div class="col-md-6">
+						<label for="trainPlace" class="form-label">훈련 장소</label>
+						<input type="text" class="form-control" id="trainPlace" placeholder="훈련 장소를 입력하세요" required>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="startDate" class="form-label">훈련 시작일</label>
+						<input type="date" class="form-control" id="startDate" required>
+					</div>
+					<div class="col-md-6">
+						<label for="endDate" class="form-label">훈련 종료일</label>
+						<input type="date" class="form-control" id="endDate" required>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="startTime" class="form-label">시작 시각</label>
+						<input type="time" class="form-control" id="startTime" required>
+					</div>
+					<div class="col-md-6">
+						<label for="endTime" class="form-label">종료 시각</label>
+						<input type="time" class="form-control" id="endTime" required>
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="limitCount" class="form-label">훈련 제한인원</label>
+						<input type="number" class="form-control" id="limitCount" placeholder="인원수를 입력하세요" required>
+					</div>
+					<div class="col-md-6">
+						<label for="trainMemo" class="form-label">훈련 내용</label>
+						<input type="text" class="form-control" id="trainMemo" placeholder="훈련 내용을 입력하세요" required>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button id="submitTrain" class="btn btn-primary">추가</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+	
+
+	
+</th:block>
+<th:block layout:fragment="customContents2">
+	<div id="container">
+    <!-- 훈련 상세 정보와 참가자 표시 -->
+    <div id="trainDetails" class="p-4 border rounded shadow-sm bg-light">
+        <div id="noSelectionMessage" style="display: block;"></div>
+        <div id="trainInfo" style="display: none;">
+            <h4 class="mb-4 text-primary"><i class="fas fa-info-circle"></i><b> 훈련 상세 정보</b></h4>
+            <div class="mb-3"> 
+            	<strong class="text-secondary">훈련명:</strong> <span id="detailTrainName" class="text-dark fw-bold"></span>
+            </div>
+            <div class="mb-3"> 
+            	<strong class="text-secondary">훈련 장소:</strong> <span id="detailArea" class="text-dark"></span>
+            </div>
+            <div class="mb-3"> 
+            	<strong class="text-secondary">훈련 시작일:</strong> <span id="detailStartDate" class="text-dark"></span>
+            	<strong class="text-secondary">훈련 시작 시각:</strong> <span id="detailStartTime" class="text-dark"></span>
+            </div>
+            <div class="mb-3"> 
+            	<strong class="text-secondary">훈련 종료일:</strong> <span id="detailEndDate" class="text-dark"></span>
+            	<strong class="text-secondary">훈련 종료 시각:</strong> <span id="detailEndTime" class="text-dark"></span>
+            </div>
+            <div class="mb-3"> 
+            	<strong class="text-secondary">훈련 제한인원:</strong> <span id="detailCountMem" class="text-dark"></span>
+            </div>
+            <div class="mb-3"> 
+            	<strong class="text-secondary">훈련 내용:</strong> <br>
+            	<span id="detailMemo" class="text-dark"></span>
+            </div>
+           <div class="mb-3"> 
+            	<strong class="text-secondary"><i class="fas fa-users"></i>훈련 참가자:</strong> <br>
+            	<div id="participantsContainer" class="text-dark fw-bold"></div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- 버튼 영역: 수정, 삭제 버튼은 우측 정렬 -->
+    <div id="buttonsWrapper">
+        <div id="leftButtons">
+            <button id="addPlayersToTrain" class="btn btn-primary btn-sm">
+                <i class="fas fa-user-plus fa-sm text-white-50"></i> 선수 추가
+            </button>
+        </div>
+        <div id="rightButtons">
+            <button id="editTrainButton" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit fa-sm text-white-50"></i> 훈련 수정
+            </button>
+            <button id="deleteTrainButton" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash fa-sm text-white-50"></i> 훈련 삭제
+            </button>
+        </div>
+    </div>
+
+    <!-- 선수 목록 테이블 -->
+    <div id="playerSection" style="flex: 1; border: 1px solid #ddd; padding: 20px; overflow-y: auto;">
+        <table class="table table-hover" id="playerTable">
+            <thead>
+                <tr style="background-color: #f0f0f0">
+                    <th><input type="checkbox" id="selectAllPerson"></th>
+                    <th>등번호</th>
+                    <th>선수명</th>
+                    <th>포지션</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+ 
+    	<!-- 훈련 수정 모달 -->
+	<div id="editTrainModal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="editModalTitle" class="modal-title">훈련 수정</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+
+			<div class="modal-body">
+				<!-- 기본 정보 수정 4행 2열로 나눈 폼 -->
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="editTrainName" class="form-label">훈련명</label>
+						<input type="text" class="form-control" id="editTrainName" placeholder="훈련명을 수정하세요">
+					</div>
+					<div class="col-md-6">
+						<label for="editTrainPlace" class="form-label">훈련 장소</label>
+						<input type="text" class="form-control" id="editTrainPlace" placeholder="훈련 장소를 수정하세요">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="editStartDate" class="form-label">훈련 시작일</label>
+						<input type="date" class="form-control" id="editStartDate">
+					</div>
+					<div class="col-md-6">
+						<label for="editEndDate" class="form-label">훈련 종료일</label>
+						<input type="date" class="form-control" id="editEndDate">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="editStartTime" class="form-label">시작 시각</label>
+						<input type="time" class="form-control" id="editStartTime">
+					</div>
+					<div class="col-md-6">
+						<label for="editEndTime" class="form-label">종료 시각</label>
+						<input type="time" class="form-control" id="editEndTime">
+					</div>
+				</div>
+
+				<div class="row mb-3">
+					<div class="col-md-6">
+						<label for="editLimitCount" class="form-label">훈련 제한인원</label>
+						<input type="number" class="form-control" id="editLimitCount" placeholder="인원수를 입력하세요">
+					</div>
+					<div class="col-md-6">
+						<label for="editTrainMemo" class="form-label">훈련 내용</label>
+						<input type="text" class="form-control" id="editTrainMemo" placeholder="훈련 내용을 수정하세요">
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button id="saveTrainChanges" class="btn btn-primary">수정 내용 저장</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+    
+    
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+    	  	<div class="modal-header">
+        		<h5 class="modal-title" id="errorModalLabel">오류</h5>
+       			<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      		<div class="modal-body">
+        	<!-- 서버에서 반환된 에러 메시지가 여기에 표시됩니다 -->
+      		</div>
+      		<div class="modal-footer">
+       			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+     		</div>
+    	</div>
+  	</div>
+</div>
+</th:block>
+
+<th:block layout:fragment="customJs">
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/modal.js"></script>
+	<script src="/js/train.js"></script>
+</th:block>
+</html>

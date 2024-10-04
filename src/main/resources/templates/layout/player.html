@@ -1,0 +1,423 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<th:block layout:fragment="customCss">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/player.css}">
+</th:block>
+
+<th:block layout:fragment="customContents1">
+    <h3 style="margin-bottom: 4rem;" class="bold">선수 관리</h3>
+    <div class="container mb-4">
+        <div class="row mb-3">
+            <div class="col d-flex justify-content-end align-items-center">
+                <!-- 관리자 권한일 경우 추가/삭제 가능 -->
+                <!-- 추가/삭제 버튼을 오른쪽에 배치 -->
+                <div sec:authorize="hasRole('ADMIN')">
+                    <button id="add-player-btn" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#player-modal">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> 선수 추가
+                    </button>&nbsp;
+                    <button id="delete-player-btn" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash fa-sm text-white-50"></i> 선택 삭제
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="person-table-widget">
+        <table class="table table-hover" id="playerTable">
+            <thead class="table">
+            <tr style="background-color: #f0f0f0">
+                <div sec:authorize="hasRole('ADMIN')">
+                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                </div>
+                <th>선수명</th>
+                <th>포지션</th>
+                <th>등번호</th>
+            </tr>
+            </thead>
+            <tbody id="person-rows"></tbody>
+        </table>
+        <!-- 검색 -->
+        <div class="row mb-3">
+            <div class="d-flex justify-content-center mb-3">
+                <div class="input-group">
+                    <select class="form-select" id="search-option" style="max-width: 150px;">
+                        <option value="personName">선수명</option>
+                        <option value="position">포지션</option>
+                    </select>
+                    <input type="text" class="form-control" id="search-value" placeholder="검색어 입력">
+                    <button class="btn btn-dark" id="search-btn">
+                        <i class="fas fa-search"></i> 검색
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <button id="prevGroup" class="page-link" disabled>이전</button>
+            </li>
+            <span id="pageButtons" class="pagination"></span>
+            <li class="page-item">
+                <button id="nextGroup" class="page-link" disabled>다음</button>
+            </li>
+        </ul>
+    </nav>
+
+    <th:block th:replace="fragments/modal :: modalFragment"></th:block>
+
+    <!-- 모달 구조 -->
+    <div id="player-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modalTitle" class="modal-title">선수 추가</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- 공통 입력 필드 -->
+                    <!-- ability, personImage -->
+                    <form action="#" id="add-player-info">
+                        <input type="hidden" name="facilityIdx" value="999">
+                        <input type="hidden" name="typeCode" value="player">
+                        <div id="commonFields" class="mb-3">
+                            <div class="mb-3">
+                                <label for="add-personName" id="dateLabel" class="form-label">선수명</label>
+                                <input type="text" name="personName" id="add-personName" class="form-control" required>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="add-teamIdx" class="form-label">팀명</label>
+                                    <input type="text" class="form-control" name="teamIdx" id="add-teamIdx" value="GFC"
+                                           required>
+                                </div>
+                                <div class="col">
+                                    <label for="add-backNumber" class="form-label">등번호</label>
+                                    <input type="text" class="form-control" name="backNumber" id="add-backNumber"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="add-height" class="form-label">키</label>
+                                    <input type="number" class="form-control" name="height" id="add-height" required>
+                                </div>
+                                <div class="col">
+                                    <label for="add-weight" class="form-label">몸무게</label>
+                                    <input type="number" class="form-control" name="weight" id="add-weight" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="add-birth" class="form-label">생일</label>
+                                    <input type="date" class="form-control" name="birth" id="add-birth" required>
+                                </div>
+                                <div class="col">
+                                    <label for="add-nationality" class="form-label">국적</label>
+                                    <input type="text" class="form-control" name="nationality" id="add-nationality"
+                                           required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 포지션 구분 라디오 버튼 -->
+                        <div class="mb-3">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" name="position" id="add-position-gk"
+                                       value="GK" class="form-check-input" checked> <label
+                                    for="add-position-gk" class="form-check-label">GK</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" name="position" id="add-position-fw"
+                                       value="FW" class="form-check-input"> <label
+                                    for="add-position-fw" class="form-check-label">FW</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" name="position" id="add-position-mf"
+                                       value="MF" class="form-check-input"> <label
+                                    for="add-position-mf" class="form-check-label">MF</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" name="position" id="add-position-df"
+                                       value="DF" class="form-check-input"> <label
+                                    for="add-position-df" class="form-check-label">DF</label>
+                            </div>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="add-personImage" class="form-label">사진</label>
+                            <input type="file" class="form-control" id="add-personImage" required>
+                        </div>
+                    </form>
+                    <hr>
+                    <form id="add-player-ability">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="pass" class="form-label">패스</label>
+                                <input type="range" class="form-control" name="pass" id="pass" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-pass">50</span>
+                            </div>
+                            <div class="col">
+                                <label for="physical" class="form-label">피지컬</label>
+                                <input type="range" class="form-control" name="physical" id="physical" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-physical">50</span>
+                            </div>
+                            <div class="col">
+                                <label for="speed" class="form-label">스피드</label>
+                                <input type="range" class="form-control" name="speed" id="speed" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-speed">50</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="dribble" class="form-label">드리블</label>
+                                <input type="range" class="form-control" name="dribble" id="dribble" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-dribble">50</span>
+                            </div>
+                            <div class="col">
+                                <label for="shoot" class="form-label">슛</label>
+                                <input type="range" class="form-control" name="shoot" id="shoot" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-shoot">50</span>
+                            </div>
+                            <div class="col">
+                                <label for="defence" class="form-label">수비</label>
+                                <input type="range" class="form-control" name="defence" id="defence" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-defence">50</span>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="submit-player" class="btn btn-primary">추가</button>
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="customContents2">
+    <div class="grid-item-2">
+        <div class="grid-item-2-top-left d-flex flex-column align-items-center justify-content-between p-4 border rounded shadow-sm bg-light"
+             style="height: 100%;">
+            <div>
+                <h4>
+                    <p id="player-name-backnumber"></p>
+                </h4>
+            </div>
+            <!-- Center the image -->
+            <div class="d-flex justify-content-center flex-grow-1 align-items-center ">
+                <div class="image-container text-center me-4"
+                     style="width: 300px; height: 300px; overflow: hidden; display: inline-block; vertical-align: top;">
+                    <img id="player-detail-image" style="width: 100%; height: 100%; object-fit: contain;"/>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="grid-item-2-top-right p-4 border rounded shadow-sm bg-light">
+            <canvas id="player-ability-chart" style="align-self: center"></canvas>
+        </div>
+
+        <div class="grid-item-2-bottom card">
+            <div class="card-body">
+                <strong>선수 정보</strong>
+                <div class="bottom-card-box">
+                    <form id="detail-player-info">
+                        <input type="hidden" id="detail-personIdx" name="personIdx">
+                        <input type="hidden" id="detail-typeCode" name="typeCode" value="player">
+
+                        <div class="mb-3">
+                            <div class="row mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label for="detail-personName" class="form-label me-2 custom-label">선수명</label>
+                                    <input type="text" name="personName" id="detail-personName"
+                                           class="form-control custom-input">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label for="detail-teamIdx" class="form-label me-2 custom-label">팀명</label>
+                                        <input type="text" class="form-control custom-input" name="teamIdx"
+                                               id="detail-teamIdx" value="GFC" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label for="detail-backNumber" class="form-label me-2 custom-label">등번호</label>
+                                        <input type="text" class="form-control custom-input" name="backNumber"
+                                               id="detail-backNumber" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label for="detail-height" class="form-label me-2 custom-label">키</label>
+                                        <input type="number" class="form-control custom-input" name="height"
+                                               id="detail-height" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label for="detail-weight" class="form-label me-2 custom-label">몸무게</label>
+                                        <input type="number" class="form-control custom-input" name="weight"
+                                               id="detail-weight" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label for="detail-birth" class="form-label me-2 custom-label">생일</label>
+                                        <input type="date" class="form-control custom-input" name="birth"
+                                               id="detail-birth" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <label for="detail-nationality" class="form-label me-2 custom-label">국적</label>
+                                        <input type="text" class="form-control custom-input" name="nationality"
+                                               id="detail-nationality" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 포지션 구분 라디오 버튼 -->
+                            <div class="mb-3">
+                                <label class="form-label me-2 custom-label">포지션</label>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="detail-position-gk" name="position" value="GK"
+                                           class="form-check-input" checked>
+                                    <label for="detail-position-gk" class="form-check-label">GK</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="detail-position-fw" name="position" value="FW"
+                                           class="form-check-input">
+                                    <label for="detail-position-fw" class="form-check-label">FW</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="detail-position-mf" name="position" value="MF"
+                                           class="form-check-input">
+                                    <label for="detail-position-mf" class="form-check-label">MF</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="detail-position-df" name="position" value="DF"
+                                           class="form-check-input">
+                                    <label for="detail-position-df" class="form-check-label">DF</label>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label for="update-personImage" class="form-label me-2 custom-label">사진</label>
+                                    <input type="file" class="form-control custom-input" id="update-personImage">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <div sec:authorize="hasRole('ADMIN')">
+                        <button id="update-player" class="btn btn-primary btn-sm">
+                            수정하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 능력치 수정 모달 -->
+    <div id="ability-update-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">능력치 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="player-ability-detail">
+                        <div class="mb-3">
+                            <div class="mb-3">
+                                <label for="pass" class="form-label">패스</label>
+                                <input type="range" class="form-control" name="pass" id="update-pass" min="1" max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-update-pass">50</span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="physical" class="form-label">피지컬</label>
+                                <input type="range" class="form-control" name="physical" id="update-physical" min="1"
+                                       max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-update-physical">50</span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="speed" class="form-label">스피드</label>
+                                <input type="range" class="form-control" name="speed" id="update-speed" min="1"
+                                       max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-update-speed">50</span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="dribble" class="form-label">드리블</label>
+                                <input type="range" class="form-control" name="dribble" id="update-dribble" min="1"
+                                       max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-update-dribble">50</span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="shoot" class="form-label">슛</label>
+                                <input type="range" class="form-control" name="shoot" id="update-shoot" min="1"
+                                       max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-update-shoot">50</span>
+                            </div>
+                            <div class="mb-3">
+                                <label for="defence" class="form-label">수비</label>
+                                <input type="range" class="form-control" name="defence" id="update-defence" min="1"
+                                       max="100"
+                                       value="50" oninput="updateAbilityValue(this.id, this.value)">
+                                <span id="show-update-defence">50</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="update-player-ability" class="btn btn-primary">수정</button>
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="customJs">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="/js/player.js"></script>
+</th:block>
+
+</html>

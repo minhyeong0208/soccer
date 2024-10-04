@@ -1,0 +1,119 @@
+.fc-day-sun a { /* 일요일 컬러 */
+    color: #ee3224;
+}
+
+.fc-day-sat a { /* 토요일 컬러 */
+    color: #0067ac;
+}
+
+.match {
+    background-color: #cfeafb;
+    border-color: #cfeafb;
+}
+
+.training {
+    background-color: #fdd9e0;
+    border-color: #fdd9e0;
+}
+
+.fc-day-mon a,
+.fc-day-tue a,
+.fc-day-wed a,
+.fc-day-thu a,
+.fc-day-fri a { /* 평일 컬러 */
+    color: black;
+}
+
+.fc-theme-standard th {
+    height: 32px;
+    padding-top: 3.5px;
+    background: #e5edff;
+    border: 1px solid #dddee0;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+    color: #7b7b7b;
+}
+
+.fc .fc-daygrid-day-frame {
+    padding: 10px;
+}
+
+.fc .fc-daygrid-day-top {
+    flex-direction: row;
+    margin-bottom: 3px;
+}
+
+.fc-event {
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.fc-event-time {
+    display: none;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: #fff8bd;
+    color: #356eff;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: #c6c8ca;
+    border-radius: 20px;
+}
+
+.fc .fc-button {
+    background-color: transparent;
+    color: white;
+    border: none;
+}
+
+.fc-icon {
+    color: black;
+}
+
+.fc-button.fc-next-button,
+.fc-button.fc-prev-button {
+    background-color: transparent !important; /* 버튼 배경을 완전히 제거 */
+    border: none !important; /* 버튼 테두리 제거 */
+    box-shadow: none !important; /* 버튼 그림자 제거 */
+    outline: none !important; /* 버튼 선택 시 외곽선 제거 */
+}
+
+.fc-button.fc-next-button:hover,
+.fc-button.fc-prev-button:hover,
+.fc-button.fc-next-button:focus,
+.fc-button.fc-prev-button:focus {
+    background-color: transparent !important; /* 포커스 및 호버 시에도 배경 제거 유지 */
+    border: none !important; /* 포커스 및 호버 시에도 테두리 제거 유지 */
+    box-shadow: none !important; /* 포커스 및 호버 시에도 그림자 제거 유지 */
+    outline: none !important; /* 포커스 및 호버 시에도 외곽선 제거 유지 */
+}
+
+.fc-event-title {
+    color: black;
+}
+
+.fc-daygrid-event-dot {
+    display: none;
+}
+
+.fc-toolbar-title {
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none;
+}
+
+#modal-title {
+    font-weight: bold;
+}

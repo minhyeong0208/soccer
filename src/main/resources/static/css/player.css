@@ -1,0 +1,56 @@
+.position {
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    font-weight: 500;
+}
+
+.position--MF {
+    background: #cddffa;
+    color: #37495b;
+}
+
+.position--DF {
+    background: #EAFEF3;
+    color: #2ECC71;
+}
+
+.position--GK {
+    background: #bdbdbd;
+    color: #575757;
+}
+
+.position--FW {
+    background: #ffecc9;
+    color: #F4BD50;
+}
+
+.grid-item-2-top-left {
+    grid-column: 1 / 2; /* 첫 번째 열 */
+}
+
+.grid-item-2-top-right {
+    grid-column: 2 / 3; /* 두 번째 열 */
+}
+
+.grid-item-2-bottom {
+    grid-column: 1 / 3; /* 전체 너비를 차지하도록 두 열에 걸쳐서 배치 */
+}
+
+.bottom-card-box {
+    margin: 4rem; /* 여백 추가 */
+}
+
+.custom-label {
+    width: 120px; /* Adjust as needed */
+    display: inline-block;
+}
+
+.custom-input {
+    width: calc(100% - 140px);
+}
+
+.card {
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 0.5rem 0 rgba(58, 59, 69, 0.15);
+}

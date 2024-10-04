@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default2}">
+<th:block layout:fragment="customCss">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/calendar2.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/scheduleDetailModal.css}">
+</th:block>
+
+<th:block layout:fragment="customContents">
+    <div id="calendar"></div>
+    <div id="modal-background" class="modal-background">
+        <div class="popup">
+            <h2 id="modal-title"></h2>
+            <p><strong>일자 : </strong> <span id="modal-start"></span></p>
+            <p><strong>상세 : </strong> <span id="modal-description"></span></p>
+            <p><strong>정보 : </strong> <span id="modal-class"></span></p>
+            <div class="modal-footer">
+                <button id="modal-close">Close</button>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="customJs">
+    <!-- Fullcalendar.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.15/index.global.min.js"></script>
+    <script src="/js/schedule.js"></script>+
+</th:block>
+</html>

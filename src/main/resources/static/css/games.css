@@ -1,0 +1,139 @@
+/* 기본 폰트 설정 */
+body {
+    font-family: "IBM Plex Sans", sans-serif;
+}
+
+/* 경기 관리 board css */
+.card {
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    max-width: 100%; /* 최대 너비를 화면에 맞게 설정 */
+    max-height: calc(100vh - 120px); /* 최대 높이를 화면에 맞게 설정 (헤더와 여백을 고려) */
+}
+.card-left-border {
+    border-left: 0.25rem solid;
+}
+.border-left-primary { border-left-color: #4e73df; }
+.border-left-success { border-left-color: #1cc88a; }
+.border-left-info { border-left-color: #36b9cc; }
+.border-left-warning { border-left-color: #f6c23e; }
+.text-xs { font-size: .7rem; }
+.text-primary { color: #4e73df !important; }
+.text-success { color: #1cc88a !important; }
+.text-info { color: #36b9cc !important; }
+.text-warning { color: #f6c23e !important; }
+
+.custom-icon1 {
+    color: #4e73df; /* 경기 수 */
+    opacity: 0.5;
+}
+
+.custom-icon2 {
+    color: #1cc88a; /* 승패 마진 */
+    opacity: 0.5;
+}
+
+.custom-icon3 {
+    color: #36b9cc; /* 팀 득점 */
+    opacity: 0.5;
+}
+
+.custom-icon4 {
+    color: #f6c23e; /* 팀 실점 */
+    opacity: 0.5;
+}
+
+/* 팀 로고 컨테이너 스타일 */
+.team-logo-container {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* 팀 로고 이미지 스타일 */
+.team-logo{
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* vs 로고 이미지 스타일 */
+.versus-logo {
+    max-width: 70%;
+    max-height: 70%;
+    object-fit: contain;
+}
+
+/* IBM Plex Sans 폰트 스타일 */
+.ibm-plex-sans-thin {
+    font-weight: 100;
+    font-style: normal;
+}
+
+.ibm-plex-sans-extralight {
+    font-weight: 200;
+    font-style: normal;
+}
+
+.ibm-plex-sans-light {
+    font-weight: 300;
+    font-style: normal;
+}
+
+.ibm-plex-sans-regular {
+    font-weight: 400;
+    font-style: normal;
+}
+
+.ibm-plex-sans-medium {
+    font-weight: 500;
+    font-style: normal;
+}
+
+.ibm-plex-sans-semibold {
+    font-weight: 600;
+    font-style: normal;
+}
+
+.ibm-plex-sans-bold {
+    font-weight: 700;
+    font-style: normal;
+}
+
+.ibm-plex-sans-thin-italic {
+    font-weight: 100;
+    font-style: italic;
+}
+
+.ibm-plex-sans-extralight-italic {
+    font-weight: 200;
+    font-style: italic;
+}
+
+.ibm-plex-sans-light-italic {
+    font-weight: 300;
+    font-style: italic;
+}
+
+.ibm-plex-sans-regular-italic {
+    font-weight: 400;
+    font-style: italic;
+}
+
+.ibm-plex-sans-medium-italic {
+    font-weight: 500;
+    font-style: italic;
+}
+
+.ibm-plex-sans-semibold-italic {
+    font-weight: 600;
+    font-style: italic;
+}
+
+.ibm-plex-sans-bold-italic {
+    font-weight: 700;
+    font-style: italic;
+}

@@ -1,0 +1,161 @@
+CREATE DATABASE soccer2;
+
+use soccer2;
+
+CREATE TABLE ability (
+    ability_idx INT(11) NOT NULL AUTO_INCREMENT,  -- 각 능력치 레코드에 대한 고유 식별자 (기본 키)
+    person_idx INT(11) NULL,                      -- 선수의 고유 식별자 (외래 키가 될 수 있음)
+    pass INT(11) NULL,                            -- 패스 능력치
+    physical INT(11) NULL,                        -- 신체 능력치
+    shoot INT(11) NULL,                           -- 슛 능력치
+    speed INT(11) NULL,                           -- 스피드 능력치
+    dribble INT(11) NULL,                         -- 드리블 능력치
+    defence INT(11) NULL,                         -- 수비 능력치
+    measure_date DATETIME NULL,                   -- 능력치 측정 날짜 및 시간
+    input_type INT(11) NULL,                      -- 입력 유형 (0: 실제, 1: 예측)
+    PRIMARY KEY (ability_idx)                     -- ability_idx를 기본 키로 설정
+);
+
+-- 테이블 soccer.facility 구조 내보내기
+CREATE TABLE IF NOT EXISTS `facility` (
+  `facility_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `facility_name` varchar(100) DEFAULT NULL COMMENT '시설명',
+  `facility_location` varchar(255) DEFAULT NULL COMMENT '시설 위치',
+  `latitude` double DEFAULT NULL COMMENT '위도',
+  `longitude` double DEFAULT NULL COMMENT '경도',
+  `capacity` int(11) DEFAULT NULL COMMENT '수용량',
+  `facility_found` date DEFAULT NULL COMMENT '준공날짜',
+  PRIMARY KEY (`facility_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.finance 구조 내보내기
+CREATE TABLE IF NOT EXISTS `finance` (
+  `finance_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `finance_type` varchar(50) DEFAULT NULL COMMENT '수입/지출',
+  `finance_date` timestamp DEFAULT CURRENT_TIMESTAMP COMMENT '입출금날짜',
+  `amount` int(11) DEFAULT NULL COMMENT '금액',
+  `trader` varchar(50) DEFAULT NULL COMMENT '거래대상',
+  `purpose` varchar(100) DEFAULT NULL COMMENT '적요',
+  `finance_memo` varchar(100) DEFAULT NULL COMMENT '비고',
+  PRIMARY KEY (`finance_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=UTF8MB4_GENERAL_CI;
+
+-- 테이블 soccer.game 구조 내보내기
+CREATE TABLE IF NOT EXISTS `game` (
+  `game_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `game_name` varchar(50) DEFAULT NULL COMMENT '경기명',
+  `game_date` date DEFAULT NULL COMMENT '경기일자',
+  `stadium` varchar(100) DEFAULT NULL COMMENT '경기장',
+  `goal` int(11) DEFAULT NULL COMMENT '득점',
+  `concede` int(11) DEFAULT NULL COMMENT '실점',
+  `opponent` varchar(20) DEFAULT NULL COMMENT '상대팀',
+  `game_type` varchar(50) DEFAULT NULL COMMENT '경기타입',
+  `is_home` int(11) DEFAULT NULL COMMENT 'home:1 away:0',
+  PRIMARY KEY (`game_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=UTF8MB4_GENERAL_CI;
+
+-- 테이블 soccer.injury 구조 내보내기
+CREATE TABLE IF NOT EXISTS `injury` (
+  `injury_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `person_idx` int(11) DEFAULT NULL COMMENT 'foreign key(person)',
+  `broken_date` datetime DEFAULT NULL COMMENT '부상날짜',
+  `severity` varchar(50) DEFAULT NULL COMMENT '심각도',
+  `doctor` varchar(50) DEFAULT NULL COMMENT '주치의',
+  `recovery` int(11) DEFAULT NULL COMMENT '회복기간',
+  `memo` text DEFAULT NULL COMMENT '비고',
+  `injury_part` varchar(100) DEFAULT NULL COMMENT '부상 부위',
+  PRIMARY KEY (`injury_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.login 구조 내보내기
+CREATE TABLE IF NOT EXISTS `login` (
+  `login_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `login_id` varchar(50) DEFAULT NULL COMMENT '아이디',
+  `pw` VARCHAR(200) DEFAULT NULL COMMENT '비밀번호',
+  `role` VARCHAR(20) NOT NULL COMMENT '관리자/사용자',
+  PRIMARY KEY (`login_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.person 구조 내보내기
+CREATE TABLE IF NOT EXISTS `person` (
+  `person_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `team_idx` varchar(3) DEFAULT NULL COMMENT 'foreign key(team)',
+  `facility_idx` int(11) DEFAULT NULL COMMENT 'foreign key(facility)',
+  `person_name` varchar(100) DEFAULT NULL COMMENT '선수/코치명',
+  `height` double DEFAULT NULL COMMENT '키',
+  `weight` double DEFAULT NULL COMMENT '몸무게',
+  `birth` date DEFAULT NULL COMMENT '생년월일',
+  `position` varchar(50) DEFAULT NULL COMMENT '포지션',
+  `back_number` int(11) DEFAULT NULL COMMENT '등번호',
+  `nationality` varchar(50) DEFAULT NULL COMMENT '국적',
+  `contract_start` date DEFAULT NULL COMMENT '계약시작일',
+  `contract_end` date DEFAULT NULL COMMENT '계약종료일',
+  `id` varchar(50) DEFAULT NULL COMMENT '아이디',
+  `phone` varchar(50) DEFAULT NULL COMMENT '전화번호',
+  `gender` varchar(50) DEFAULT NULL COMMENT '성별',
+  `email` varchar(50) DEFAULT NULL COMMENT '이메일',
+  `type_code` varchar(50) DEFAULT NULL COMMENT '역할 구분',
+  `person_image` varchar(200) DEFAULT NULL COMMENT '프로필 이미지',
+  PRIMARY KEY (`person_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.sponsor 구조 내보내기
+CREATE TABLE IF NOT EXISTS `sponsor` (
+  `sponsor_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `sponsor_name` varchar(50) DEFAULT NULL COMMENT '스폰서명',
+  `contract_date` date DEFAULT NULL COMMENT '계약날짜',
+  `price` int(11) DEFAULT NULL COMMENT '금액',
+  `contract_condition` text DEFAULT NULL COMMENT '계약 조건',
+  `sponsor_memo` text DEFAULT NULL COMMENT '계약 내용',
+  `start_date` date DEFAULT NULL COMMENT '계약 시작일',
+  `end_date` date DEFAULT NULL COMMENT '계약 종료일',
+  PRIMARY KEY (`sponsor_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.team 구조 내보내기
+CREATE TABLE IF NOT EXISTS `team` (
+  `team_idx` varchar(3) NOT NULL,
+  `facility_idx` int(11) DEFAULT NULL COMMENT 'foreign key(facility)',
+  `team_name` varchar(100) DEFAULT NULL COMMENT '팀명',
+  `found` date DEFAULT NULL COMMENT '창단일',
+  `hometown` varchar(100) DEFAULT NULL COMMENT '연고지',
+  `team_image` varchar(255) DEFAULT NULL COMMENT '팀 이미지 경로',
+  PRIMARY KEY (`team_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.train 구조 내보내기
+CREATE TABLE IF NOT EXISTS `train` (
+  `train_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `train_name` varchar(100) DEFAULT NULL COMMENT '훈련명',
+  `start_date` date DEFAULT NULL COMMENT '훈련 시작일',
+  `end_date` date DEFAULT NULL COMMENT '훈련 종료일',
+  `start_time` datetime DEFAULT NULL COMMENT '훈련 시작시각',
+  `end_time` datetime DEFAULT NULL COMMENT '훈련 종료시각',
+  `area` varchar(100) DEFAULT NULL COMMENT '훈련 장소',
+  `memo` text DEFAULT NULL COMMENT '훈련 메모',
+  `count_mem` int(11) DEFAULT 0 COMMENT '훈련 참가 인원',
+  PRIMARY KEY (`train_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.trainmem 구조 내보내기
+CREATE TABLE IF NOT EXISTS `trainmem` (
+  `trainmem_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `train_idx` int(11) DEFAULT NULL,
+  `person_idx` int(11) DEFAULT NULL,
+  PRIMARY KEY (`trainmem_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 soccer.transfer 구조 내보내기
+CREATE TABLE IF NOT EXISTS `transfer` (
+  `transfer_idx` int(11) NOT NULL AUTO_INCREMENT,
+  `person_idx` int(11) DEFAULT NULL COMMENT 'foreign key(person)',
+  `transfer_type` int(11) DEFAULT NULL COMMENT '영입 : 1 방출 : 0',
+  `trading_date` date DEFAULT NULL COMMENT '이적 일자',
+  `opponent` varchar(20) DEFAULT NULL COMMENT '이적팀',
+  `transfer_memo` text DEFAULT NULL COMMENT '이적 메모',
+  `price` int(11) DEFAULT NULL COMMENT '이적료',
+  `player_name` varchar(255) DEFAULT  NULL,
+  PRIMARY KEY (`transfer_idx`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=UTF8MB4_GENERAL_CI;
+
+
